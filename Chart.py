@@ -59,46 +59,43 @@ while True:
     humidity = bme280.get_humidity()
     quality = sgp30.get_air_quality()
     timestamp=time.mktime(time.localtime())
-    #print(quality.equivalent_co2)
+    
     print('{:05.2f}*C {:05.2f}hPa {:05.2f}% {:05.2f}ppm '.format(temperature, pressure, humidity, quality.equivalent_co2))
     
-    if len(timestamps) > 10:
+    if len(timestamps) > 100:
         temperatures.pop(0)
         pressures.pop(0)
         humidities.pop(0)
         qualities.pop(0)
         timestamps.pop(0)
 
-    temperatures.append(temperature)
-    pressures.append(pressure)
-    humidities.append(humidity)
-    qualities.append(quality.equivalent_co2)
+    temperatures.append(round(temperature, 2))
+    pressures.append(round(pressure, 2))
+    humidities.append(round(humidity, 2))
+    qualities.append(round(quality.equivalent_co2, 2))
     timestamps.append(timestamp)
+
+    ax1.cla()
+    ax2.cla()
+    ax3.cla()
+    ax4.cla()
+    
+    ConfigurePlot(ax1, "Temperature")
+    ConfigurePlot(ax2, "Humidity")
+    ConfigurePlot(ax3, "Pressure")
+    ConfigurePlot(ax4, "Quality")
     
     ax1.plot(timestamps, temperatures, linewidth=0.5)
     ax2.plot(timestamps, humidities, 'tab:orange', linewidth=0.5)
     ax3.plot(timestamps, pressures, 'tab:green', linewidth=0.5)
     ax4.plot(timestamps, qualities, 'tab:red', linewidth=0.5)
-    ConfigurePlot(ax1, "Temperature")
-    ConfigurePlot(ax2, "Humidity")
-    ConfigurePlot(ax3, "Pressure")
-    ConfigurePlot(ax4, "Quality") 
 
     #fig.tight_layout(pad=2, h_pad=2, w_pad=3.5, rect=[0.035, -0.04, 1.02, 1])
     fig.set_dpi(261.09)
     fig.set_size_inches(0.9213, 0.9213)
 
     plt.savefig(image_file)
-    
-    ax1.cla()
-    ax2.cla()
-    ax3.cla()
-    ax4.cla()
-
     image = Image.open(image_file)
-
     image = image.resize((WIDTH, HEIGHT))
-
     disp.display(image)
-    time.sleep(1)
-
+    time.sleep(6)
